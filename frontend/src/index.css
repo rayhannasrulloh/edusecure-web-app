@@ -1,7 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+
+
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #999;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
 body {
+    font-family: "Quicksand", sans-serif;
   background: #101218;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 body.load::before {
   transform: scalex(1) !important;

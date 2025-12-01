@@ -44,20 +44,23 @@ const Dashboard = () => {
 
   const handleSurveySubmit = async (selectedInterest) => {
     try {
-        const res = await axios.post('http://127.0.0.1:8000/api/save-interest/', {
+        // 1. Kirim Data ke Backend
+        await axios.post('http://127.0.0.1:8000/api/save-interest/', {
             username: username,
             interest: selectedInterest
         });
         
-        // Update data lokal agar UI berubah langsung
-        setUserData({
-            ...userData,
-            interest: selectedInterest,
-            recommendations: res.data.recommendations
-        });
-        setShowSurvey(false); // Tutup modal
+        // 2. Refresh Data Dashboard (PENTING!)
+        // Ini akan memicu get_dashboard_data lagi, yang otomatis mengambil 
+        // rekomendasi terbaru sesuai interest yang baru disimpan.
+        await fetchDashboardData(); 
+        
+        // 3. Tutup Modal
+        setShowSurvey(false);
+        alert(`Minat berhasil diubah ke ${selectedInterest}`); // Opsional: Feedback ke user
+
     } catch (error) {
-        console.error("Error saving interest", error);
+        console.error(error);
         alert("Gagal menyimpan survey.");
     }
   };
@@ -167,21 +170,44 @@ const Dashboard = () => {
             <div className="right-column">
                 <div className="card">
                     <h3>AI Recommendations</h3>
-                    <p style={{fontSize:'0.9rem', color:'#6b7280', marginBottom:'15px'}}>
-                        Adaptive path based on your interest in <strong>{userData?.interest || "..."}</strong>.
-                    </p>
-
-                    {userData?.recommendations.map((course) => (
-                        <div key={course.id} className="rec-box">
-                            <h4 style={{margin:'0 0 5px 0'}}>{course.title}</h4>
-                            <span className="rec-tag">{course.level}</span>
-                            <div style={{marginTop:'10px', fontSize:'0.85rem', color:'#1a56db', cursor:'pointer'}}>
-                                View Details →
-                            </div>
-                        </div>
-                    ))}
                     
-                    {userData?.recommendations.length === 0 && <p>Selesaikan survey untuk mendapatkan rekomendasi.</p>}
+                    <div style={{marginBottom:'15px', color:'#6b7280', fontSize:'0.9rem', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                        <span>
+                            Adaptive path based on: <strong>{userData?.interest || "None"}</strong>
+                        </span>
+                        {/* TOMBOL EDIT INTEREST */}
+                        <button 
+                            onClick={() => setShowSurvey(true)}
+                            style={{background:'none', border:'none', cursor:'pointer', color:'#1a56db', textDecoration:'underline', fontSize:'0.8rem'}}
+                        >
+                            Change
+                        </button>
+                    </div>
+
+                    {userData?.recommendations && userData.recommendations.length > 0 ? (
+                        userData.recommendations.map((module) => (
+                            <div key={module.id} className="rec-box">
+                                <h4 style={{margin:'0 0 5px 0'}}>{module.title}</h4>
+                                <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                                    <span className="rec-tag">{module.level}</span>
+                                    {/* Tombol Start Langsung ke Lesson */}
+                                    <span 
+                                        style={{fontSize:'0.85rem', color:'#1a56db', cursor:'pointer', fontWeight:'bold'}}
+                                        onClick={() => navigate(`/lesson/${module.id}`)}
+                                    >
+                                        Start Learning →
+                                    </span>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div style={{textAlign:'center', padding:'20px', color:'#9ca3af'}}>
+                            <p>Tidak ada rekomendasi khusus.</p>
+                            <button onClick={() => setShowSurvey(true)} className="secondary-btn">
+                                Atur Minat Belajar
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

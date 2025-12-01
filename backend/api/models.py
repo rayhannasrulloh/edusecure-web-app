@@ -3,11 +3,19 @@ from django.contrib.auth.models import User
 import json
 
 class Module(models.Model):
+    CATEGORY_CHOICES = [
+        ('AI', 'Artificial Intelligence'),
+        ('Cyber Security', 'Cyber Security'),
+        ('IoT', 'Internet of Things'),
+        ('General', 'General'),
+    ]
+
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=500)
     level = models.CharField(max_length=50, default="Beginner") # e.g., Beginner, Intermediate
     content = models.TextField(blank=True, null=True, help_text="Fill the material learning content here.")
-
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='General')
+    
     def __str__(self):
         return self.title
 

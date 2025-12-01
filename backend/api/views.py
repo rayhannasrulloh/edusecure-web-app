@@ -149,25 +149,25 @@ class SubmitExamView(APIView):
             "next_module_unlocked": dss_decision['unlock_next']
         })
 
-# --- LOGIKA REKOMENDASI AI SEDERHANA (DSS) ---
-def get_recommendations(interest):
-    if interest == 'AI':
-        return [
-            {"id": 1, "title": "Python for Data Science", "level": "Beginner"},
-            {"id": 2, "title": "Neural Networks 101", "level": "Intermediate"}
-        ]
-    elif interest == 'Cyber Security':
-        return [
-            {"id": 3, "title": "Ethical Hacking Basics", "level": "Beginner"},
-            {"id": 4, "title": "Network Defense", "level": "Advanced"}
-        ]
-    elif interest == 'IoT':
-        return [
-            {"id": 5, "title": "Arduino & Sensors", "level": "Beginner"},
-            {"id": 6, "title": "Smart Home Protocols", "level": "Intermediate"}
-        ]
-    else:
-        return [{"id": 0, "title": "General Computer Science", "level": "All Levels"}]
+# # --- LOGIKA REKOMENDASI AI SEDERHANA (DSS) ---
+# def get_recommendations(interest):
+#     if interest == 'AI':
+#         return [
+#             {"id": 1, "title": "Python for Data Science", "level": "Beginner"},
+#             {"id": 2, "title": "Neural Networks 101", "level": "Intermediate"}
+#         ]
+#     elif interest == 'Cyber Security':
+#         return [
+#             {"id": 3, "title": "Ethical Hacking Basics", "level": "Beginner"},
+#             {"id": 4, "title": "Network Defense", "level": "Advanced"}
+#         ]
+#     elif interest == 'IoT':
+#         return [
+#             {"id": 5, "title": "Arduino & Sensors", "level": "Beginner"},
+#             {"id": 6, "title": "Smart Home Protocols", "level": "Intermediate"}
+#         ]
+#     else:
+#         return [{"id": 0, "title": "General Computer Science", "level": "All Levels"}]
     
 # --- VIEW MODULES LIST ---
 @api_view(['GET'])
@@ -189,22 +189,45 @@ def save_interest(request):
     username = request.data.get('username')
     interest = request.data.get('interest')
     
+    # 1. Validasi Input
+    if not username or not interest:
+        return Response({"error": "Username dan Interest wajib diisi."}, status=400)
+
     try:
+        # 2. Cari Profile User
         profile = StudentProfile.objects.get(user__username=username)
+        
+        # 3. Update Minat
         profile.interest = interest
         profile.save()
         
-        # Langsung kembalikan rekomendasi setelah save
-        recommendations = get_recommendations(interest)
-        return Response({"status": "success", "recommendations": recommendations})
+        # 4. Return Success (Tidak perlu kirim rekomendasi disini, biar Frontend yang refresh)
+        return Response({
+            "status": "success", 
+            "message": f"Minat berhasil diperbarui ke {interest}",
+            "current_interest": interest
+        })
+        
     except StudentProfile.DoesNotExist:
-        return Response({"error": "User not found"}, status=404)
+        return Response({"error": "User tidak ditemukan."}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
 
 @api_view(['GET'])
 def get_dashboard_data(request):
     username = request.query_params.get('username')
     try:
         profile = StudentProfile.objects.get(user__username=username)
+
+        # Jika user punya interest, ambil modul dengan kategori tersebut
+        if profile.interest:
+            recommended_modules = Module.objects.filter(category=profile.interest)[:3] # Ambil 3 teratas
+        else:
+            recommended_modules = []
+
+        # Serialize data modul
+        rec_serializer = ModuleSerializer(recommended_modules, many=True)
         
         #ambil 5 riwayat terakhir
         history = ExamResult.objects.filter(student=profile).order_by('-completed_at')[:5]
@@ -213,12 +236,13 @@ def get_dashboard_data(request):
         data = {
             "fullName": profile.user.first_name or username,
             "interest": profile.interest,
-            "recommendations": get_recommendations(profile.interest) if profile.interest else [],
+            "recommendations": rec_serializer.data,
             "history": history_serializer.data
         }
         return Response(data)
     except StudentProfile.DoesNotExist:
         return Response({"error": "User not found"}, status=404)
+
 
 @api_view(['POST'])
 def submit_quiz(request):
@@ -257,6 +281,7 @@ def submit_quiz(request):
     except Exception as e:
         print(e)
         return Response({"error": "Gagal menyimpan nilai"}, status=400)
+
 
 @api_view(['GET'])
 def get_quiz_questions(request):
