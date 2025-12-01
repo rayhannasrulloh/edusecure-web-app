@@ -8,30 +8,33 @@ const Dashboard = () => {
   const [userData, setUserData] = useState(null);
   const [showSurvey, setShowSurvey] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [modules, setModules] = useState([]);
 
-  // Ambil username dari localStorage (disimpan saat login)
   const username = localStorage.getItem('username');
 
   const fetchDashboardData = async () => {
     try {
-        const res = await axios.get(`http://127.0.0.1:8000/api/dashboard/?username=${username}`);
-        setUserData(res.data);
+        //Ambil Data User & Interest
+        const userRes = await axios.get(`http://127.0.0.1:8000/api/dashboard/?username=${username}`);
+        setUserData(userRes.data);
+        if (!userRes.data.interest) setShowSurvey(true);
+
+        //Ambil Daftar Modul Real dari Database
+        const moduleRes = await axios.get('http://127.0.0.1:8000/api/modules/');
+        setModules(moduleRes.data);
         
-        // Jika interest masih kosong, tampilkan Survey
-        if (!res.data.interest) {
-            setShowSurvey(true);
-        }
         setLoading(false);
     } catch (error) {
         console.error("Error fetching data", error);
         setLoading(false);
     }
-    return;
   };
 
   useEffect(() => {
+    document.body.className = "load";
+
     if (!username) {
-        navigate('/login'); // Redirect kalau belum login
+        navigate('/login'); // redirect kalau belum login
         return;
     }
     fetchDashboardData();
@@ -70,7 +73,7 @@ const Dashboard = () => {
     <div className="dashboard-container">
       {/* --- HEADER --- */}
       <nav className="top-nav">
-        <div className="logo-area">📖 EduSecure</div>
+        <div className="logo-area">EduSecure</div>
         <div className="user-area">
             <span style={{marginRight: '15px'}}>Hi, {userData?.fullName}</span>
             <button onClick={handleLogout} className="logout-btn">Logout</button>
@@ -81,37 +84,83 @@ const Dashboard = () => {
       <div className="main-content">
         <div className="welcome-section">
             <h1>Student Dashboard</h1>
-            <p>Welcome back. Student ID: {username}</p>
+            <p>Welcome back. {username}</p>
         </div>
 
         <div className="dashboard-grid">
-            {/* KIRI: Performance & Modules */}
+            
+            {/* KIRI */}
             <div className="left-column">
-                <div className="card">
+             <div className="card">
                     <h3>Performance Overview</h3>
-                    <div style={{height: '150px', background: '#f9fafb', display:'flex', alignItems:'center', justifyContent:'center', color:'#9ca3af', borderRadius:'8px', border:'2px dashed #e5e7eb'}}>
-                        Belum ada hasil kuis (Data Placeholder)
-                    </div>
+                    
+                    {/* LOGIKA TAMPILAN HISTORY */}
+                    {userData?.history && userData.history.length > 0 ? (
+                        <div className="history-list">
+                            {userData.history.map((item, index) => (
+                                <div key={index} style={{
+                                    display: 'flex', 
+                                    justifyContent: 'space-between', 
+                                    padding: '10px', 
+                                    borderBottom: '1px solid #eee',
+                                    alignItems: 'center'
+                                }}>
+                                    <div>
+                                        <strong>{item.module_title}</strong>
+                                        <div style={{fontSize:'0.8rem', color:'#888'}}>
+                                            {new Date(item.completed_at).toLocaleDateString()}
+                                        </div>
+                                    </div>
+                                    <div style={{textAlign:'right'}}>
+                                        <div style={{fontWeight:'bold', fontSize:'1.1rem'}}>
+                                            {item.score}
+                                        </div>
+                                        <span style={{
+                                            fontSize:'0.75rem', 
+                                            padding:'2px 6px', 
+                                            borderRadius:'4px',
+                                            background: item.status === 'Lulus' ? '#dcfce7' : '#fee2e2',
+                                            color: item.status === 'Lulus' ? '#166534' : '#991b1b'
+                                        }}>
+                                            {item.status}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div style={{height: '100px', display:'flex', alignItems:'center', justifyContent:'center', color:'#9ca3af', fontStyle:'italic'}}>
+                            Belum ada riwayat kuis. Silakan mulai modul.
+                        </div>
+                    )}
                 </div>
 
-                <div className="card">
-                    <h3>Available Modules</h3>
-                    {/* Module List Hardcoded for Demo */}
-                    <div className="course-item">
-                        <div>
-                            <h4>Basic Security Concepts</h4>
-                            <span style={{fontSize:'0.8rem', color:'#6b7280'}}>Introduction to InfoSec</span>
+             <div className="card">
+                 <h3>Available Modules</h3>
+                 
+                 {/* LOOPING MODULE DARI DATABASE */}
+                 {modules.length === 0 ? (
+                     <p>Tidak ada modul tersedia.</p>
+                 ) : (
+                     modules.map((module) => (
+                        <div key={module.id} className="course-item">
+                            <div>
+                                <h4>{module.title}</h4>
+                                <span style={{fontSize:'0.8rem', color:'#6b7280'}}>
+                                    {module.description} • {module.level}
+                                </span>
+                            </div>
+                            {/* TOMBOL START MENGIRIM ID MODUL */}
+                            <button 
+                                className="start-btn" 
+                                onClick={() => navigate(`/lesson/${module.id}`)}
+                            >
+                                Start
+                            </button>
                         </div>
-                        <button className="start-btn">Start</button>
-                    </div>
-                    <div className="course-item">
-                        <div>
-                            <h4>Network Protocols</h4>
-                            <span style={{fontSize:'0.8rem', color:'#6b7280'}}>TCP/IP and OSI Model</span>
-                        </div>
-                        <button className="start-btn">Start</button>
-                    </div>
-                </div>
+                     ))
+                 )}
+             </div>
             </div>
 
             {/* KANAN: AI Recommendations (Hasil DSS) */}
@@ -138,7 +187,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* --- SURVEY MODAL (Muncul jika belum ada Interest) --- */}
+      {/* --- SURVEY MODAL --- */}
       {showSurvey && (
         <div className="modal-overlay">
             <div className="modal-content">

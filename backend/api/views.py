@@ -5,7 +5,7 @@ import json
 from io import BytesIO
 from PIL import Image
 
-
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
@@ -14,7 +14,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from rest_framework import status
-from .models import StudentProfile
+from .models import StudentProfile, QuizQuestion, Module, ExamResult
+from .serializers import QuizQuestionSerializer, ModuleSerializer, ExamResultSerializer
 
 # --- HELPER FUNCTION ---
 def decode_base64_image(base64_string):
@@ -116,6 +117,7 @@ class LoginFaceView(APIView):
         else:
             return Response({"status": "fail", "message": "Face verification failed. Not a match."}, status=status.HTTP_401_UNAUTHORIZED)
 
+# --- SUBMIT EXAM & DSS INTEGRATION ---
 class SubmitExamView(APIView):
     def post(self, request):
         # 1. Get Data from React
@@ -166,6 +168,20 @@ def get_recommendations(interest):
         ]
     else:
         return [{"id": 0, "title": "General Computer Science", "level": "All Levels"}]
+    
+# --- VIEW MODULES LIST ---
+@api_view(['GET'])
+def get_modules(request):
+    modules = Module.objects.all()
+    serializer = ModuleSerializer(modules, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def get_module_detail(request, module_id):
+    # Ambil satu modul spesifik berdasarkan ID
+    module = get_object_or_404(Module, id=module_id)
+    serializer = ModuleSerializer(module)
+    return Response(serializer.data)
 
 # --- VIEW DASHBOARD & SURVEY ---
 @api_view(['POST'])
@@ -190,12 +206,66 @@ def get_dashboard_data(request):
     try:
         profile = StudentProfile.objects.get(user__username=username)
         
-        # Jika user belum isi survey, interest-nya kosong/null
+        #ambil 5 riwayat terakhir
+        history = ExamResult.objects.filter(student=profile).order_by('-completed_at')[:5]
+        history_serializer = ExamResultSerializer(history, many=True)
+
         data = {
-            "fullName": profile.user.first_name or username, # Fallback ke username
+            "fullName": profile.user.first_name or username,
             "interest": profile.interest,
-            "recommendations": get_recommendations(profile.interest) if profile.interest else []
+            "recommendations": get_recommendations(profile.interest) if profile.interest else [],
+            "history": history_serializer.data
         }
         return Response(data)
     except StudentProfile.DoesNotExist:
         return Response({"error": "User not found"}, status=404)
+
+@api_view(['POST'])
+def submit_quiz(request):
+    username = request.data.get('username') #kita butuh username sekarang
+    module_id = request.data.get('module_id') #kita butuh ID modul
+    score = request.data.get('score')
+    
+    try:
+        profile = StudentProfile.objects.get(user__username=username)
+        module = Module.objects.get(id=module_id)
+        
+        # 1. Logika DSS
+        status = "Lulus" if score >= 60 else "Remedial"
+        message = ""
+        
+        if score >= 80:
+            message = "Luar biasa! Modul lanjutan dibuka."
+        elif score >= 60:
+            message = "Selamat, Anda lulus."
+        else:
+            message = "Nilai belum cukup. Silakan pelajari ulang."
+
+        ExamResult.objects.create(
+            student=profile,
+            module=module,
+            score=score,
+            status=status
+        )
+        
+        return Response({
+            "status": status,
+            "message": message,
+            "score": score
+        })
+
+    except Exception as e:
+        print(e)
+        return Response({"error": "Gagal menyimpan nilai"}, status=400)
+
+@api_view(['GET'])
+def get_quiz_questions(request):
+    module_id = request.query_params.get('module_id')
+
+    if module_id:
+        questions = QuizQuestion.objects.filter(module__id=module_id)
+    else:
+        questions = QuizQuestion.objects.all()
+    
+    serializer = QuizQuestionSerializer(questions, many=True)
+    return Response(serializer.data)

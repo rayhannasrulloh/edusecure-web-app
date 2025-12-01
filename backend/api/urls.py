@@ -16,11 +16,15 @@ Including another URLconf
 """
 
 from django.urls import path
-from .views import RegisterFaceView, LoginFaceView, save_interest, get_dashboard_data
+from .views import RegisterFaceView, LoginFaceView, save_interest, get_dashboard_data, submit_quiz, get_modules, get_quiz_questions, get_module_detail
 
 urlpatterns = [
     path('register/', RegisterFaceView.as_view(), name='register'),
     path('login/', LoginFaceView.as_view(), name='login'),
     path('save-interest/', save_interest, name='save_interest'),
     path('dashboard/', get_dashboard_data, name='get_dashboard_data'),
+    path('submit-quiz/', submit_quiz, name='submit_quiz'),
+    path('modules/', get_modules, name='get_modules'),
+    path('questions/', get_quiz_questions, name='get_quiz_questions'),
+    path('modules/<int:module_id>/', get_module_detail, name='module_detail'),
 ]

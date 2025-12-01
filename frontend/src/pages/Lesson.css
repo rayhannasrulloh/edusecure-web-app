@@ -1,0 +1,50 @@
+.lesson-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    font-family: 'Inter', sans-serif;
+}
+
+.lesson-header {
+    border-bottom: 2px solid #f3f4f6;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.lesson-title { font-size: 2rem; color: #111827; margin: 0 0 10px 0; }
+.lesson-meta { color: #6b7280; font-size: 0.9rem; }
+
+.lesson-content {
+    line-height: 1.8;
+    color: #374151;
+    font-size: 1.1rem;
+    white-space: pre-wrap; /* Agar enter/paragraf terbaca */
+    margin-bottom: 40px;
+}
+
+.action-area {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 2px solid #f3f4f6;
+    padding-top: 20px;
+}
+
+.quiz-btn {
+    background-color: #1a56db;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+
+.quiz-btn:hover { background-color: #1e40af; }
