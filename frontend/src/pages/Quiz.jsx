@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import './Quiz.css';
+import ProctorCam from '../components/ProctorCam';
 
 const Quiz = () => {
     const navigate = useNavigate();
@@ -13,8 +14,10 @@ const Quiz = () => {
     const [showResult, setShowResult] = useState(false);
     const [dssFeedback, setDssFeedback] = useState(null);
     const [loading, setLoading] = useState(true); //state loading
+    const [warningMsg, setWarningMsg] = useState("");
 
     const username = localStorage.getItem('username'); //ambil username dari localStorage
+    
 
     //FETCH DATA DARI BACKEND SAAT HALAMAN DIBUKA
     useEffect(() => {
@@ -73,6 +76,24 @@ const Quiz = () => {
 
     return (
         <div className="quiz-container">
+            {/* KAMERA PENGAWAS (hanya muncul jika quiz belum selesai) */}
+            {!showResult && (
+                <ProctorCam onWarning={(msg) => setWarningMsg(msg)} />
+            )}
+
+            {/* ALERT PERINGATAN */}
+            {warningMsg && (
+                <div style={{
+                    position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)',
+                    background: '#ef4444', color: 'white', padding: '15px 30px', 
+                    borderRadius: '50px', fontWeight: 'bold', zIndex: 10000,
+                    boxShadow: '0 4px 15px rgba(239, 68, 68, 0.5)',
+                    animation: 'pulse 1s infinite'
+                }}>
+                    ! {warningMsg} !
+                </div>
+            )}
+
             {!showResult ? (
                 <div className="quiz-card">
                     <h4 style={{color:'#6b7280'}}>Question {currentQuestion + 1} / {questions.length}</h4>
