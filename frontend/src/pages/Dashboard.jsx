@@ -87,7 +87,7 @@ const Dashboard = () => {
       <div className="main-content">
         <div className="welcome-section">
             <h1>Student Dashboard</h1>
-            <p>Welcome back. {username}</p>
+            <p>Welcome mate. {username}</p>
         </div>
 
         <div className="dashboard-grid">
