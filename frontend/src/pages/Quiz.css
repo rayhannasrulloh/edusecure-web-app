@@ -30,8 +30,70 @@
     font-size: 2rem; font-weight: bold; margin: 0 auto 20px auto;
 }
 
+/* --- FITUR ANTI-CHEAT --- */
+
+/* Class ini akan dipasang saat user curang */
+.quiz-content.blurred {
+    filter: blur(10px);      /* Membuat teks dan soal kabur */
+    pointer-events: none;    /* MATIKAN KLIK: User tidak bisa pilih jawaban */
+    user-select: none;       /* MATIKAN BLOK: User tidak bisa copy paste text */
+    opacity: 0.5;
+    transition: 0.3s;
+}
+
+/* Layar Merah Peringatan */
+.warning-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(220, 38, 38, 0.85); /* Merah transparan */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Pastikan di atas segalanya */
+    color: white;
+    text-align: center;
+    animation: fadeIn 0.3s;
+}
+
+.warning-icon {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    animation: shake 0.5s infinite;
+}
+
+.warning-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.warning-desc {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    font-weight: 500;
+}
+
 @keyframes pulse {
   0% { transform: translateX(-50%) scale(1); }
   50% { transform: translateX(-50%) scale(1.05); }
   100% { transform: translateX(-50%) scale(1); }
 }
+
+/* Animasi Getar untuk Icon */
+@keyframes shake {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+

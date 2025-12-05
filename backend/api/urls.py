@@ -17,6 +17,7 @@ Including another URLconf
 
 from django.urls import path
 from .views import RegisterFaceView, LoginFaceView, save_interest, get_dashboard_data, submit_quiz, get_modules, get_quiz_questions, get_module_detail
+from .views import request_password_reset, verify_and_reset_password
 
 urlpatterns = [
     path('register/', RegisterFaceView.as_view(), name='register'),
@@ -27,4 +28,6 @@ urlpatterns = [
     path('modules/', get_modules, name='get_modules'),
     path('questions/', get_quiz_questions, name='get_quiz_questions'),
     path('modules/<int:module_id>/', get_module_detail, name='module_detail'),
+    path('forgot-password/', request_password_reset, name='forgot_password'),
+    path('reset-password/', verify_and_reset_password, name='reset_password'),
 ]

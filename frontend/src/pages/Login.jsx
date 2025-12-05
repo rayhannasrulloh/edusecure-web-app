@@ -92,9 +92,9 @@ const Login = () => {
             
             {/* Tombol Kecil di bawah kamera */}
              {!imgSrc ? (
-                <button onClick={capture} className="secondary-btn mb-4">📸 Scan Wajah</button>
+                <button onClick={capture} className="secondary-btn mb-4">Scan Wajah</button>
             ) : (
-                <button onClick={retake} className="secondary-btn retake mb-4">🔄 Scan Ulang</button>
+                <button onClick={retake} className="secondary-btn retake mb-4">Scan Ulang</button>
             )}
 
             {/* Input Form */}
@@ -124,6 +124,12 @@ const Login = () => {
             >
                 {isLoading ? "Verifying..." : "Login Now"}
             </button>
+
+            <div style={{textAlign: 'right', marginTop: '10px'}}>
+                <Link to="/forgot-password" style={{fontSize: '0.9rem', color: '#6b7280', textDecoration: 'none'}}>
+                    Lupa Password?
+                </Link>
+            </div>
 
             <Link to="/register" className="auth-link">
                 Belum terdaftar? <span>Register disini</span>

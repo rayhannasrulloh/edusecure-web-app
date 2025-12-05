@@ -5,6 +5,10 @@ import json
 from io import BytesIO
 from PIL import Image
 
+from django.core.mail import send_mail
+from django.conf import settings
+import random
+
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -14,7 +18,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from rest_framework import status
-from .models import StudentProfile, QuizQuestion, Module, ExamResult
+from .models import PasswordResetOTP, StudentProfile, QuizQuestion, Module, ExamResult
 from .serializers import QuizQuestionSerializer, ModuleSerializer, ExamResultSerializer
 
 # --- HELPER FUNCTION ---
@@ -40,40 +44,47 @@ class RegisterFaceView(APIView):
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
-        image_data = request.data.get('image') # This is the Base64 string
+        email = request.data.get('email')           # <--- TAMBAHAN: Ambil Email
+        full_name = request.data.get('fullName')    # <--- TAMBAHAN: Ambil Nama Lengkap
+        image_data = request.data.get('image')
 
-        if not username or not password or not image_data:
-            return Response({"error": "Missing fields"}, status=status.HTTP_400_BAD_REQUEST)
+        # Validasi dasar
+        if not username or not password or not image_data or not email:
+            return Response({"error": "Semua field (termasuk email) wajib diisi."}, status=400)
 
-        # 1. Check if user exists
+        # 1. Cek User Exist
         if User.objects.filter(username=username).exists():
-            return Response({"error": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
-
-        # 2. Process Image
+            return Response({"error": "Username sudah dipakai"}, status=400)
+            
+        # 2. Process Image (Tetap sama)
         img_array = decode_base64_image(image_data)
         if img_array is None:
-            return Response({"error": "Invalid image data"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Data gambar tidak valid"}, status=400)
 
-        # 3. Detect Face
+        # 3. Detect Face (Tetap sama)
         face_locations = face_recognition.face_locations(img_array)
         if len(face_locations) == 0:
-            return Response({"error": "No face detected. Please ensure your face is clearly visible."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Wajah tidak terdeteksi. Pastikan pencahayaan cukup."}, status=400)
         
-        # 4. Generate Encoding (Use the first face found)
         face_encoding = face_recognition.face_encodings(img_array, face_locations)[0]
 
-        # 5. Create User & Profile
+        # 4. Create User & Profile (BAGIAN INI YANG DIPERBAIKI)
         try:
-            user = User.objects.create_user(username=username, password=password)
-            profile = StudentProfile.objects.create(user=user)
+            # Simpan username, EMAIL, dan password
+            user = User.objects.create_user(
+                username=username, 
+                email=email,            # <--- PENTING: Simpan email disini
+                password=password,
+                first_name=full_name    # <--- Opsional: Simpan nama lengkap di first_name
+            )
             
-            # Save the encoding (convert numpy array to list for JSON serialization)
+            profile = StudentProfile.objects.create(user=user)
             profile.set_encoding(face_encoding.tolist())
             profile.save()
 
-            return Response({"message": "User registered successfully with Face ID!"}, status=status.HTTP_201_CREATED)
+            return Response({"message": "Registrasi Berhasil! Silakan Login."}, status=201)
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": str(e)}, status=500)
 
 # --- LOGIN ENDPOINT ---
 class LoginFaceView(APIView):
@@ -294,3 +305,62 @@ def get_quiz_questions(request):
     
     serializer = QuizQuestionSerializer(questions, many=True)
     return Response(serializer.data)
+
+#kode otp password reset
+@api_view(['POST'])
+def request_password_reset(request):
+    email = request.data.get('email')
+    
+    try:
+        # Cari user berdasarkan email
+        user = User.objects.get(email=email)
+        
+        # 1. Generate 6 Digit OTP
+        otp = str(random.randint(100000, 999999))
+        
+        # 2. Simpan ke Database (Hapus OTP lama jika ada)
+        PasswordResetOTP.objects.filter(user=user).delete()
+        PasswordResetOTP.objects.create(user=user, otp_code=otp)
+        
+        # 3. Kirim Email
+        send_mail(
+            'EduSecure - Kode Reset Password',
+            f'Halo {user.username},\n\nKode OTP untuk reset password Anda adalah: {otp}\n\nJangan berikan kode ini ke siapapun.',
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+        
+        return Response({"status": "success", "message": "OTP telah dikirim ke email Anda."})
+        
+    except User.DoesNotExist:
+        # Demi keamanan, tetap bilang sukses meski email tidak ada (agar hacker tidak bisa cek email terdaftar)
+        # Tapi untuk development, kita jujur dulu biar gampang debug
+        return Response({"error": "Email tidak terdaftar."}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+@api_view(['POST'])
+def verify_and_reset_password(request):
+    email = request.data.get('email')
+    otp_input = request.data.get('otp')
+    new_password = request.data.get('new_password')
+    
+    try:
+        user = User.objects.get(email=email)
+        otp_record = PasswordResetOTP.objects.filter(user=user, otp_code=otp_input).first()
+        
+        if not otp_record:
+            return Response({"error": "Kode OTP Salah atau Kadaluarsa."}, status=400)
+        
+        # Ganti Password
+        user.set_password(new_password) # set_password otomatis meng-hash password
+        user.save()
+        
+        # Hapus OTP setelah dipakai
+        otp_record.delete()
+        
+        return Response({"status": "success", "message": "Password berhasil diubah. Silakan login."})
+        
+    except User.DoesNotExist:
+        return Response({"error": "User tidak valid."}, status=404)

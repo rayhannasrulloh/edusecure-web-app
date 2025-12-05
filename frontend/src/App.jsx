@@ -4,6 +4,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Quiz from './pages/Quiz';
 import Lesson from './pages/Lesson';
+import ForgotPassword from './pages/ForgotPassword';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/quiz/:moduleId" element={<Quiz />} />
         <Route path="/lesson/:moduleId" element={<Lesson />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
     </Router>
   );
