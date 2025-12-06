@@ -1,4 +1,10 @@
 /* Dashboard.css */
+
+h1,h2,h3,h4,h5 {
+  font-family: "Quicksand", sans-serif;
+  font-weight: 700;
+}
+
 .dashboard-container {
   min-height: 100vh;
   background-color: #f3f4f6;
@@ -18,6 +24,7 @@
 }
 
 .logo-area {
+  font-family: quicksand, sans-serif;
   font-weight: 700;
   font-size: 1.2rem;
   display: flex;

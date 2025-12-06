@@ -18,6 +18,15 @@
   background: #777;
 }
 
+::selection {
+  background-color: #36cdff;
+  color: #ffffff;
+}
+::-moz-selection {
+  background-color: #36cdff;
+  color: #ffffff;
+}
+
 body {
     font-family: "Quicksand", sans-serif;
   background: #101218;

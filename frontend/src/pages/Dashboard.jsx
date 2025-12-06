@@ -44,20 +44,17 @@ const Dashboard = () => {
 
   const handleSurveySubmit = async (selectedInterest) => {
     try {
-        // 1. Kirim Data ke Backend
+        // send data to backend
         await axios.post('http://127.0.0.1:8000/api/save-interest/', {
             username: username,
             interest: selectedInterest
         });
         
-        // 2. Refresh Data Dashboard (PENTING!)
-        // Ini akan memicu get_dashboard_data lagi, yang otomatis mengambil 
-        // rekomendasi terbaru sesuai interest yang baru disimpan.
+        // refresh data dashboard
         await fetchDashboardData(); 
         
-        // 3. Tutup Modal
         setShowSurvey(false);
-        alert(`Minat berhasil diubah ke ${selectedInterest}`); // Opsional: Feedback ke user
+        alert(`Minat berhasil diubah ke ${selectedInterest}`);
 
     } catch (error) {
         console.error(error);
@@ -133,7 +130,7 @@ const Dashboard = () => {
                         </div>
                     ) : (
                         <div style={{height: '100px', display:'flex', alignItems:'center', justifyContent:'center', color:'#9ca3af', fontStyle:'italic'}}>
-                            Belum ada riwayat kuis. Silakan mulai modul.
+                            There is no quiz history yet bruh. Please start the module.
                         </div>
                     )}
                 </div>
@@ -143,7 +140,7 @@ const Dashboard = () => {
                  
                  {/* LOOPING MODULE DARI DATABASE */}
                  {modules.length === 0 ? (
-                     <p>Tidak ada modul tersedia.</p>
+                     <p>Damn, No modules available.</p>
                  ) : (
                      modules.map((module) => (
                         <div key={module.id} className="course-item">
@@ -153,9 +150,9 @@ const Dashboard = () => {
                                     {module.description} • {module.level}
                                 </span>
                             </div>
-                            {/* TOMBOL START MENGIRIM ID MODUL */}
-                            <button 
-                                className="start-btn" 
+                            {/* BUTTON START SEND MODULE ID */}
+                            <button
+                                className="start-btn"
                                 onClick={() => navigate(`/lesson/${module.id}`)}
                             >
                                 Start
@@ -166,7 +163,7 @@ const Dashboard = () => {
              </div>
             </div>
 
-            {/* KANAN: AI Recommendations (Hasil DSS) */}
+            {/* KANAN: AI Recommendations (DSS Result) */}
             <div className="right-column">
                 <div className="card">
                     <h3>AI Recommendations</h3>
@@ -176,7 +173,7 @@ const Dashboard = () => {
                             Adaptive path based on: <strong>{userData?.interest || "None"}</strong>
                         </span>
                         {/* TOMBOL EDIT INTEREST */}
-                        <button 
+                        <button
                             onClick={() => setShowSurvey(true)}
                             style={{background:'none', border:'none', cursor:'pointer', color:'#1a56db', textDecoration:'underline', fontSize:'0.8rem'}}
                         >
@@ -202,9 +199,9 @@ const Dashboard = () => {
                         ))
                     ) : (
                         <div style={{textAlign:'center', padding:'20px', color:'#9ca3af'}}>
-                            <p>Tidak ada rekomendasi khusus.</p>
+                            <p>There are no specific recommendations.</p>
                             <button onClick={() => setShowSurvey(true)} className="secondary-btn">
-                                Atur Minat Belajar
+                                Set Learning Interests
                             </button>
                         </div>
                     )}
@@ -217,8 +214,8 @@ const Dashboard = () => {
       {showSurvey && (
         <div className="modal-overlay">
             <div className="modal-content">
-                <h2>Tentukan Jalur Belajarmu</h2>
-                <p>Agar AI kami dapat membantu, topik apa yang paling ingin Anda pelajari?</p>
+                <h2>Determine Your Learning Path</h2>
+                <p>To help our AI, what topics would you most like to learn about?</p>
                 
                 <div className="interest-options">
                     <button onClick={() => handleSurveySubmit('AI')} className="interest-btn">Artificial Intelligence</button>

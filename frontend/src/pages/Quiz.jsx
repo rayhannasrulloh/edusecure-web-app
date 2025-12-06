@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import ProctorCam from '../components/ProctorCam'; // Import Webcam Pengawas
+import ProctorCam from '../components/ProctorCam';
 import './Quiz.css';
 
 const Quiz = () => {
@@ -14,11 +14,9 @@ const Quiz = () => {
     const [showResult, setShowResult] = useState(false);
     const [dssFeedback, setDssFeedback] = useState(null);
     const [loading, setLoading] = useState(true);
-    
-    // STATE BARU: Peringatan
     const [warningMsg, setWarningMsg] = useState(""); 
 
-    // Ambil Username
+    // ambil Username
     const username = localStorage.getItem('username');
 
     useEffect(() => {
@@ -36,7 +34,7 @@ const Quiz = () => {
     }, [moduleId]);
 
     const handleAnswer = (index) => {
-        // Jika sedang ada warning, jawaban tidak bisa diklik (Double protection selain CSS)
+        // kalo ada warning, jawaban gbisa diklik (double protection selain css)
         if (warningMsg) return;
 
         if (index === questions[currentQuestion].answer) {
@@ -66,13 +64,13 @@ const Quiz = () => {
             setScore(finalScore);
             setShowResult(true);
         } catch (error) {
-            console.error("Gagal mengirim jawaban:", error);
-            alert("Gagal mengirim jawaban.");
+            console.error(error);
+            alert("Failed mengirim jawaban.");
         }
     };
 
-    if (loading) return <div className="quiz-container">Memuat Soal...</div>;
-    if (questions.length === 0) return <div className="quiz-container">Belum ada soal tersedia.</div>;
+    if (loading) return <div className="quiz-container">Load Question...</div>;
+    if (questions.length === 0) return <div className="quiz-container">There are no questions available yet.</div>;
 
     return (
         <div className="quiz-container">
@@ -124,7 +122,7 @@ const Quiz = () => {
                                 className="primary-btn" 
                                 onClick={() => navigate('/dashboard')}
                             >
-                                Kembali ke Dashboard
+                                Back to Dashboard
                             </button>
                         </div>
                     </div>

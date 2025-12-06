@@ -4,7 +4,7 @@ import axios from 'axios';
 import './Lesson.css';
 
 const Lesson = () => {
-    const { moduleId } = useParams(); // Ambil ID dari URL
+    const { moduleId } = useParams();
     const navigate = useNavigate();
     const [module, setModule] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -41,7 +41,7 @@ const Lesson = () => {
 
             {/* Isi Materi */}
             <div className="lesson-content">
-                {module.content ? module.content : "Belum ada materi untuk modul ini."}
+                {module.content ? module.content : "GODDAMN. There is no material for this module yet."}
             </div>
 
             {/* Tombol Lanjut ke Kuis */}

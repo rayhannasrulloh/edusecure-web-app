@@ -72,8 +72,8 @@ const Login = () => {
       {/* --- KANAN --- */}
       <div className="right-panel">
         <div className="form-container">
-            <h2>Welcome Back</h2>
-            <p className="sub-header">Verifikasi wajah untuk akses kelas.</p>
+            <h2>Welcome Back Mate! Sheesh</h2>
+            <p className="sub-header">Facial verification for class access.</p>
 
             {/* Area Kamera */}
             <div className="camera-box">
@@ -92,9 +92,9 @@ const Login = () => {
             
             {/* Tombol Kecil di bawah kamera */}
              {!imgSrc ? (
-                <button onClick={capture} className="secondary-btn mb-4">Scan Wajah</button>
+                <button onClick={capture} className="secondary-btn mb-4">Scan Face</button>
             ) : (
-                <button onClick={retake} className="secondary-btn retake mb-4">Scan Ulang</button>
+                <button onClick={retake} className="secondary-btn retake mb-4">Rescan the face</button>
             )}
 
             {/* Input Form */}

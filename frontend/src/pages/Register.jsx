@@ -71,8 +71,8 @@ const Register = () => {
   return (
     <div className="split-container">
       <div className="left-panel">
-        <h1>Join EduSecure</h1>
-        <p>Buat profil pembelajaran adaptif Anda sekarang.</p>
+        <h1>Join Edusecure</h1>
+        <p>Create your adaptive learning profile now.</p>
         
         <div className="stepper">
           <div className={`step ${step >= 1 ? 'active' : ''}`}>
@@ -132,9 +132,9 @@ const Register = () => {
                 
                 {/* Tombol Kamera (Capture / Retake) */}
                 {!imgSrc ? (
-                    <button onClick={capture} className="secondary-btn">📸 Ambil Foto</button>
+                    <button onClick={capture} className="secondary-btn">Take a photo</button>
                 ) : (
-                    <button onClick={retake} className="secondary-btn retake">🔄 Foto Ulang</button>
+                    <button onClick={retake} className="secondary-btn retake">Retake the photo</button>
                 )}
             </div>
 
@@ -148,7 +148,7 @@ const Register = () => {
             </button>
 
             <Link to="/login" className="auth-link">
-                Sudah punya akun? <span>Login disini</span>
+                Already have an account? <span>Login here</span>
             </Link>
         </div>
       </div>

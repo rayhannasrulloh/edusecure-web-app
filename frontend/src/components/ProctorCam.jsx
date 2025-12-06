@@ -15,7 +15,7 @@ const ProctorCam = ({ onWarning }) => {
 
     useEffect(() => {
         const loadModels = async () => {
-            const MODEL_URL = '/models'; // Mengambil dari folder public/models
+            const MODEL_URL = '/models'; // mengambil dari folder public/models
             
             try {
                 await Promise.all([
@@ -25,7 +25,7 @@ const ProctorCam = ({ onWarning }) => {
                 setIsLoaded(true);
                 startVideo();
             } catch (error) {
-                console.error("Gagal memuat model AI:", error);
+                console.error("Failed to load AI model:", error);
             }
         };
         loadModels();
@@ -43,29 +43,29 @@ const ProctorCam = ({ onWarning }) => {
             ).withFaceLandmarks();
 
             if (detections.length === 0) {
-                onWarning("Wajah tidak terlihat!");
+                onWarning("GODDAMN. Face is not visible!");
                 return;
             }
 
             if (detections.length > 1) {
-                onWarning("Terdeteksi lebih dari satu orang!");
+                onWarning("NAH. More than one person detected!");
                 return;
             }
 
             // --- LOGIKA DETEKSI MENOLEH (HEAD POSE HEURISTIC) ---
             const landmarks = detections[0].landmarks;
-            const nose = landmarks.getNose()[3]; // Ujung hidung
-            const leftJaw = landmarks.getJawOutline()[0]; // Rahang kiri
-            const rightJaw = landmarks.getJawOutline()[16]; // Rahang kanan
+            const nose = landmarks.getNose()[3]; // ujung hidung
+            const leftJaw = landmarks.getJawOutline()[0]; // rahang kiri
+            const rightJaw = landmarks.getJawOutline()[16]; // rahang kanan
             
-            // Hitung jarak hidung ke rahang kiri vs kanan
+            // hitung jarak hidung ke rahang kiri vs kanan
             const distToLeft = Math.abs(nose.x - leftJaw.x);
             const distToRight = Math.abs(nose.x - rightJaw.x);
             const ratio = distToLeft / (distToLeft + distToRight);
 
             // jika rasio jauh dari 0.5 (tengah), berarti menoleh
             if (ratio < 0.2) { 
-                onWarning("Jangan menoleh ke Kanan!");
+                onWarning("Don't look to the right!");
             } else if (ratio > 0.8) {
                 onWarning("Jangan menoleh ke Kiri!");
             } else {
@@ -78,10 +78,8 @@ const ProctorCam = ({ onWarning }) => {
     return (
         <div style={{
             position: 'fixed',
-            bottom: '20px',
-            right: '20px',
-            width: '200px',
-            height: '150px',
+            bottom: '20px',right: '20px',
+            width: '200px',height: '150px',
             border: '4px solid #1a56db',
             borderRadius: '12px',
             overflow: 'hidden',
