@@ -43,7 +43,7 @@ const ProctorCam = ({ onWarning }) => {
             ).withFaceLandmarks();
 
             if (detections.length === 0) {
-                onWarning("GODDAMN. Face is not visible!");
+                onWarning("HEY. Face is not visible!");
                 return;
             }
 
@@ -67,7 +67,7 @@ const ProctorCam = ({ onWarning }) => {
             if (ratio < 0.2) { 
                 onWarning("Don't look to the right!");
             } else if (ratio > 0.8) {
-                onWarning("Jangan menoleh ke Kiri!");
+                onWarning("Don't look to the left!");
             } else {
                 onWarning(""); // aman (Menghadap depan)
             }

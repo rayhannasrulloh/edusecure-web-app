@@ -63,7 +63,7 @@ const Dashboard = () => {
         Swal.fire({
             icon: 'success',
             title: 'Success!',
-            text: `Minat berhasil diubah ke ${selectedInterest}`,
+            text: `the interest change to ${selectedInterest}`,
         });
 
     } catch (error) {
@@ -71,7 +71,7 @@ const Dashboard = () => {
         Swal.fire({
             icon: 'error',
             title: 'Failed!',
-            text: `Gagal menyimpan survey.`,
+            text: `Failed to save interest. Please try again.`,
         });
     }
   };
@@ -89,15 +89,15 @@ const Dashboard = () => {
       if (data.length === 0) {
           return (
             <div style={{height: '150px', display:'flex', alignItems:'center', justifyContent:'center', color:'#9ca3af', fontStyle:'italic'}}>
-                Belum ada riwayat kuis. Silakan mulai modul di bawah.
+                There is no quiz history yet bruh. Please start the module.
             </div>
           );
       }
 
-      // Siapkan data untuk grafik (Recharts butuh array bersih)
-      // Kita balik urutannya (reverse) agar grafik dari kiri (lama) ke kanan (baru)
+      // siapkan data buat grafik (recharts butuh array bersih)
+      // kita balik urutannya (reverse) agar grafik dari kiri (lama) ke kanan (baru)
       const chartData = [...data].reverse().map(item => ({
-          name: item.module_title.substring(0, 10) + '...', // Potong nama biar gak kepanjangan
+          name: item.module_title.substring(0, 10) + '...', // ptong nama biar gak kepanjangan
           full_name: item.module_title,
           score: item.score
       }));
@@ -179,7 +179,7 @@ const Dashboard = () => {
       <nav className="top-nav">
         <div className="logo-area">Edusecure</div>
         <div className="user-area">
-            <span style={{marginRight: '15px'}}>Hey, {userData?.fullName}</span>
+            <span style={{marginRight: '15px'}}>{userData?.fullName}</span>
             <button onClick={handleLogout} className="logout-btn">Logout</button>
         </div>
       </nav>
@@ -187,8 +187,8 @@ const Dashboard = () => {
       {/* --- MAIN CONTENT --- */}
       <div className="main-content">
         <div className="welcome-section">
-            <h1>Student Dashboard</h1>
-            <p>Welcome mate. {username}</p>
+            <h1>Hello, {username}</h1>
+            <p>Welcome to dashboard mate.</p>
         </div>
 
         <div className="dashboard-grid">
@@ -249,7 +249,7 @@ const Dashboard = () => {
                      modules.map((module) => (
                         <div key={module.id} className="course-item">
                             <div>
-                                <h4>{module.title}</h4>
+                                <h3>{module.title}</h3>
                                 <span style={{fontSize:'0.8rem', color:'#6b7280'}}>
                                     {module.description} • {module.level}
                                 </span>
