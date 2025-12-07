@@ -76,16 +76,23 @@ const ProctorCam = ({ onWarning }) => {
     };
 
     return (
-        <div style={{
+        <div className="proctor-cam-wrapper" style={{
             position: 'fixed',
-            bottom: '20px',right: '20px',
-            width: '200px',height: '150px',
+            bottom: '20px',
+            right: '20px',
+            width: '240px',   // Default Desktop
+            height: '180px',  // Default Desktop
             border: '4px solid #1a56db',
             borderRadius: '12px',
             overflow: 'hidden',
             zIndex: 9999,
-            backgroundColor: 'black',
-            boxShadow: '0 4px 10px rgba(0,0,0,0.3)'
+            backgroundColor: '#000',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: 'white',
+            textAlign: 'center'
         }}>
             <video 
                 ref={videoRef} 

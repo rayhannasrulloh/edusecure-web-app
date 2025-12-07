@@ -75,7 +75,7 @@ const Dashboard = () => {
       <nav className="top-nav">
         <div className="logo-area">Edusecure</div>
         <div className="user-area">
-            <span style={{marginRight: '15px'}}>Hi, {userData?.fullName}</span>
+            <span style={{marginRight: '15px'}}>Hey, {userData?.fullName}</span>
             <button onClick={handleLogout} className="logout-btn">Logout</button>
         </div>
       </nav>

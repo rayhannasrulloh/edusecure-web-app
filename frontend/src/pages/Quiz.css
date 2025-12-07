@@ -97,3 +97,32 @@
     to { opacity: 1; }
 }
 
+
+
+@media (max-width: 600px) {
+    .quiz-container {
+        margin: 20px auto;
+        padding: 10px;
+    }
+
+    .quiz-card {
+        padding: 20px;
+    }
+
+    .question-text {
+        font-size: 1.1rem;
+    }
+
+    .options-grid {
+        gap: 10px;
+    }
+
+    .option-btn {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    /* Kamera Proctor di HP pindah ke atas/kecil */
+    /* Kita atur lewat CSS global untuk div proctor-nya kalau bisa, 
+       tapi karena inline style di React, ini best effort */
+}

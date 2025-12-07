@@ -14,7 +14,6 @@ h1,h2,h3,h4,h5 {
 /* Header */
 .top-nav {
   background-color: #ffffff;
-  /* EduSecure Blue */
   border: rgba(168, 168, 168, 30%) solid 1px;
   color: #222;
   padding: 1rem 5rem;
@@ -32,16 +31,26 @@ h1,h2,h3,h4,h5 {
   gap: 10px;
 }
 
+.user-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .logout-btn {
   background: rgba(255, 255, 255, 0.2);
-  border: #222 solid 1px;
+  border: #111827 solid 1px;
+  font-weight: 600;
   color: #222;
   padding: 5px 15px;
-  border-radius: 4px;
+  border-radius: 5px;
   cursor: pointer;
 }
 .logout-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  font-weight: 600;
+  color: white;
+  background: rgba(170, 12, 12, 0.858);
+  border: rgba(170, 12, 12, 0.858) solid 1px;
 }
 
 /* Main Layout */
@@ -69,7 +78,6 @@ h1,h2,h3,h4,h5 {
 .dashboard-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  /* Kiri lebar, kanan sempit (rekomendasi) */
   gap: 20px;
 }
 
@@ -111,16 +119,17 @@ h1,h2,h3,h4,h5 {
 .start-btn {
   background: #ffffff00;
   color: #222;
-  border: #9a9a9a solid 1px;
+  border: #e6e6e6 solid 1px;
   padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
+  box-shadow: #6b7280 0px 2px 6px -1px;
 }
 .start-btn:hover {
   background: #3a66b8;
   color: white;
-  border: none;
+  border: #3a66b8 solid 1px;
 }
 
 /* Recommendation Box (Right Side) */
@@ -186,4 +195,48 @@ h1,h2,h3,h4,h5 {
   border-color: #1a56db;
   color: #1a56db;
   background: #f9fafb;
+}
+
+
+@media (max-width: 900px) {
+    /* Navbar jadi tumpuk atau kecil */
+    .top-nav {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .user-area {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+    /* Grid Dashboard jadi 1 kolom */
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* Hapus pembagian 2fr 1fr */
+        gap: 30px;
+    }
+
+    /* Balik urutan: Rekomendasi di atas, History di bawah (Opsional) */
+    /* .dashboard-grid { display: flex; flex-direction: column-reverse; } */
+
+    /* Kartu Modul */
+    .course-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .start-btn {
+        width: 100%; /* Tombol full width di HP */
+    }
+    
+    .modal-content {
+        width: 90%;
+        padding: 20px;
+    }
 }

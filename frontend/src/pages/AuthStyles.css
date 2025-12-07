@@ -284,3 +284,49 @@ body {
   color: #9ca3af;
   font-size: 0.75rem;
 }
+
+
+/* Tablet & Mobile (Layar dibawah 768px) */
+@media (max-width: 768px) {
+    .split-container {
+        flex-direction: column; /* Ubah dari jejer ke tumpuk */
+        height: auto;
+        min-height: 100vh;
+    }
+
+    /* Panel Biru (Kiri) jadi di Atas */
+    .left-panel {
+        width: 100%;
+        padding: 40px 20px;
+        text-align: center;
+        min-height: 250px;
+    }
+
+    .left-panel::before, .left-panel::after {
+        display: none; /* Hilangkan dekorasi bulat agar rapi */
+    }
+
+    .left-panel h1 {
+        font-size: 2rem;
+    }
+
+    /* Panel Putih (Kanan) jadi di Bawah */
+    .right-panel {
+        width: 100%;
+        padding: 40px 20px;
+        border-radius: 20px 20px 0 0; /* Lengkungan sedikit */
+        margin-top: -20px; /* Efek menumpuk sedikit */
+        background: white;
+    }
+
+    .form-container {
+        width: 100%;
+    }
+
+    /* Kamera di HP biar gak kegedean */
+    .camera-box {
+        width: 100%;
+        max-width: 300px;
+        height: 250px;
+    }
+}

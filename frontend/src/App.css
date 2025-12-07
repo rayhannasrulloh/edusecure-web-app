@@ -1,0 +1,10 @@
+@media (max-width: 600px) {
+    .proctor-cam-wrapper {
+        width: 120px !important;  /* Lebih kecil di HP */
+        height: 90px !important;
+        top: 10px !important;     /* Pindah ke ATAS kanan biar gak ganggu keyboard */
+        bottom: auto !important;
+        right: 10px !important;
+        border-width: 2px !important;
+    }
+}

@@ -48,3 +48,25 @@
 }
 
 .quiz-btn:hover { background-color: #1e40af; }
+
+
+@media (max-width: 768px) {
+    .lesson-container {
+        margin: 20px auto;
+        padding: 20px;
+        width: 95%;
+    }
+
+    .lesson-title {
+        font-size: 1.5rem;
+    }
+
+    .lesson-content {
+        font-size: 1rem;
+    }
+    
+    .quiz-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

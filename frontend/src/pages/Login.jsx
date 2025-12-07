@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import Webcam from 'react-webcam';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import { Link, useNavigate } from 'react-router-dom';
 import './AuthStyles.css';
 
@@ -27,7 +28,11 @@ const Login = () => {
   // Fungsi Login
   const handleLogin = async () => {
     if (!username || !imgSrc) {
-        alert("Mohon isi username dan ambil foto wajah.");
+        Swal.fire({
+            icon: 'warning',
+            title: 'Oops...',
+            text: 'Please fill username and take face photo!',
+        });
         return;
     }
     
@@ -35,20 +40,30 @@ const Login = () => {
     try {
         const payload = {
             username: username,
-            password: password, // Dikirim jaga-jaga, meski validasi utama via Wajah
+            password: password,
             image: imgSrc
         };
 
         const response = await axios.post('http://127.0.0.1:8000/api/login/', payload);
 
         if (response.status === 200) {
-            alert(`Welcome back, ${username}!`);
+            await Swal.fire({
+                icon: 'success',
+                title: 'Login Success!',
+                text: `Welcome back, ${username}`,
+                timer: 2000,
+                showConfirmButton: false
+            });
             localStorage.setItem('username', username)
-            navigate('/dashboard'); // Ganti ke halaman dashboard nanti
+            navigate('/dashboard');
         }
     } catch (error) {
         console.error(error);
-        alert("Login Gagal: Wajah tidak dikenali atau username salah.");
+        Swal.fire({
+            icon: 'error',
+            title: 'Login Failed',
+            text: 'Face not recognized or invalid credentials.',
+        });
         setImgSrc(null); // Reset foto agar user coba lagi
     } finally {
         setIsLoading(false);
@@ -127,15 +142,15 @@ const Login = () => {
 
             <div style={{textAlign: 'right', marginTop: '10px'}}>
                 <Link to="/forgot-password" style={{fontSize: '0.9rem', color: '#6b7280', textDecoration: 'none'}}>
-                    Lupa Password?
+                    Forgot Password?
                 </Link>
             </div>
 
             <Link to="/register" className="auth-link">
-                Belum terdaftar? <span>Register disini</span>
+                Not registered yet? <span>Register here</span>
             </Link>
 
-            <p className="footer-text">Powered by EduSecure AI</p>
+            <p className="footer-text">Powered by Edusecure AI</p>
         </div>
       </div>
     </div>
