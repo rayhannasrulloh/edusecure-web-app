@@ -6,6 +6,7 @@ import {
     BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from 'recharts';
 import './Dashboard.css';
+import Layout from '../components/Layout';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -174,162 +175,165 @@ const Dashboard = () => {
   if (loading) return <div className="dashboard-container" style={{padding:'40px'}}>Loading...</div>;
 
   return (
-    <div className="dashboard-container">
-      {/* --- HEADER --- */}
-      <nav className="top-nav">
-        <div className="logo-area">Edusecure</div>
-        <div className="user-area">
-            <span style={{marginRight: '15px'}}>{userData?.fullName}</span>
-            <button onClick={handleLogout} className="logout-btn">Logout</button>
-        </div>
-      </nav>
+    <Layout>
 
-      {/* --- MAIN CONTENT --- */}
-      <div className="main-content">
-        <div className="welcome-section">
-            <h1>Hello, {username}</h1>
-            <p>Welcome to dashboard mate.</p>
-        </div>
+        <div className="dashboard-container">
+        {/* --- HEADER --- */}
+        {/* <nav className="top-nav">
+            <div className="logo-area">Edusecure</div>
+            <div className="user-area">
+                <span style={{marginRight: '15px'}}>{userData?.fullName}</span>
+                <button onClick={handleLogout} className="logout-btn">Logout</button>
+            </div>
+        </nav> */}
 
-        <div className="dashboard-grid">
-            
-            {/* KIRI */}
-            <div className="left-column">
-                {/* 1. PERFORMANCE CARD (UPDATED) */}
-                <div className="card card-performance">
-                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'15px', borderBottom:'1px solid #e5e7eb', paddingBottom:'10px'}}>
-                        <h3 style={{borderBottom:'none', paddingBottom:0, marginBottom:0}}>Performance</h3>
-                        
-                        {/* 3. FILTER / PILIHAN TAMPILAN */}
-                        <div className="view-selector" style={{display:'flex', gap:'5px'}}>
-                            <button 
-                                onClick={() => setViewType('list')}
-                                style={{
-                                    padding:'5px 10px', borderRadius:'6px', border:'none',
-                                    background: viewType === 'list' ? '#1a56db' : 'white',
-                                    color: viewType === 'list' ? 'white' : '#666', cursor:'pointer'
-                                }}
-                            >
-                                List
-                            </button>
-                            <button 
-                                onClick={() => setViewType('bar')}
-                                style={{
-                                    padding:'5px 10px', borderRadius:'6px', border:'none',
-                                    background: viewType === 'bar' ? '#1a56db' : 'white',
-                                    color: viewType === 'bar' ? 'white' : '#666', cursor:'pointer'
-                                }}
-                            >
-                                Bar
-                            </button>
-                            <button 
-                                onClick={() => setViewType('line')}
-                                style={{
-                                    padding:'5px 10px', borderRadius:'6px', border:'none',
-                                    background: viewType === 'line' ? '#1a56db' : 'white',
-                                    color: viewType === 'line' ? 'white' : '#666', cursor:'pointer'
-                                }}
-                            >
-                                Plot
-                            </button>
-                        </div>
-                    </div>
-                    
-                    {/* Render Konten Dinamis */}
-                    {renderPerformanceContent()}
-                </div>
-
-             <div className="card">
-                 <h3>Available Modules</h3>
-                 
-                 {/* LOOPING MODULE DARI DATABASE */}
-                 {modules.length === 0 ? (
-                     <p>Damn, No modules available.</p>
-                 ) : (
-                     modules.map((module) => (
-                        <div key={module.id} className="course-item">
-                            <div>
-                                <h3>{module.title}</h3>
-                                <span style={{fontSize:'0.8rem', color:'#6b7280'}}>
-                                    {module.description} • {module.level}
-                                </span>
-                            </div>
-                            {/* BUTTON START SEND MODULE ID */}
-                            <button
-                                className="start-btn"
-                                onClick={() => navigate(`/lesson/${module.id}`)}
-                            >
-                                Start
-                            </button>
-                        </div>
-                     ))
-                 )}
-             </div>
+        {/* --- MAIN CONTENT --- */}
+        <div className="main-content">
+            <div className="welcome-section">
+                <h1>Hello, {username}</h1>
+                <p>Welcome to dashboard mate.</p>
             </div>
 
-            {/* KANAN: AI Recommmendations (DSS Result) */}
-            <div className="right-column">
-                <div className="card">
-                    <h3>AI Recommendations</h3>
-                    
-                    <div style={{marginBottom:'15px', color:'#6b7280', fontSize:'0.9rem', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                        <span>
-                            Adaptive path based on: <strong>{userData?.interest || "None"}</strong>
-                        </span>
-                        {/* TOMBOL EDIT INTEREST */}
-                        <button
-                            onClick={() => setShowSurvey(true)}
-                            style={{background:'none', border:'none', cursor:'pointer', color:'#1a56db', textDecoration:'underline', fontSize:'0.8rem'}}
-                        >
-                            Change
-                        </button>
+            <div className="dashboard-grid">
+                
+                {/* KIRI */}
+                <div className="left-column">
+                    {/* 1. PERFORMANCE CARD (UPDATED) */}
+                    <div className="card card-performance">
+                        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'15px', borderBottom:'1px solid #e5e7eb', paddingBottom:'10px'}}>
+                            <h3 style={{borderBottom:'none', paddingBottom:0, marginBottom:0}}>Performance</h3>
+                            
+                            {/* 3. FILTER / PILIHAN TAMPILAN */}
+                            <div className="view-selector" style={{display:'flex', gap:'5px'}}>
+                                <button 
+                                    onClick={() => setViewType('list')}
+                                    style={{
+                                        padding:'5px 10px', borderRadius:'6px', border:'none',
+                                        background: viewType === 'list' ? '#1a56db' : 'white',
+                                        color: viewType === 'list' ? 'white' : '#666', cursor:'pointer'
+                                    }}
+                                >
+                                    List
+                                </button>
+                                <button 
+                                    onClick={() => setViewType('bar')}
+                                    style={{
+                                        padding:'5px 10px', borderRadius:'6px', border:'none',
+                                        background: viewType === 'bar' ? '#1a56db' : 'white',
+                                        color: viewType === 'bar' ? 'white' : '#666', cursor:'pointer'
+                                    }}
+                                >
+                                    Bar
+                                </button>
+                                <button 
+                                    onClick={() => setViewType('line')}
+                                    style={{
+                                        padding:'5px 10px', borderRadius:'6px', border:'none',
+                                        background: viewType === 'line' ? '#1a56db' : 'white',
+                                        color: viewType === 'line' ? 'white' : '#666', cursor:'pointer'
+                                    }}
+                                >
+                                    Plot
+                                </button>
+                            </div>
+                        </div>
+                        
+                        {/* Render Konten Dinamis */}
+                        {renderPerformanceContent()}
                     </div>
 
-                    {userData?.recommendations && userData.recommendations.length > 0 ? (
-                        userData.recommendations.map((module) => (
-                            <div key={module.id} className="rec-box">
-                                <h4 style={{margin:'0 0 5px 0'}}>{module.title}</h4>
-                                <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                                    <span className="rec-tag">{module.level}</span>
-                                    {/* Tombol Start Langsung ke Lesson */}
-                                    <span 
-                                        style={{fontSize:'0.85rem', color:'#1a56db', cursor:'pointer', fontWeight:'bold'}}
-                                        onClick={() => navigate(`/lesson/${module.id}`)}
-                                    >
-                                        Start Learning →
+                <div className="card">
+                    <h3>Available Modules</h3>
+                    
+                    {/* LOOPING MODULE DARI DATABASE */}
+                    {modules.length === 0 ? (
+                        <p>Damn, No modules available.</p>
+                    ) : (
+                        modules.map((module) => (
+                            <div key={module.id} className="course-item">
+                                <div>
+                                    <h3>{module.title}</h3>
+                                    <span style={{fontSize:'0.8rem', color:'#6b7280'}}>
+                                        {module.description} • {module.level}
                                     </span>
                                 </div>
+                                {/* BUTTON START SEND MODULE ID */}
+                                <button
+                                    className="start-btn"
+                                    onClick={() => navigate(`/lesson/${module.id}`)}
+                                >
+                                    Start
+                                </button>
                             </div>
                         ))
-                    ) : (
-                        <div style={{textAlign:'center', padding:'20px', color:'#9ca3af'}}>
-                            <p>There are no specific recommendations.</p>
-                            <button onClick={() => setShowSurvey(true)} className="secondary-btn">
-                                Set Learning Interests
-                            </button>
-                        </div>
                     )}
                 </div>
-            </div>
-        </div>
-      </div>
+                </div>
 
-      {/* --- SURVEY MODAL --- */}
-      {showSurvey && (
-        <div className="modal-overlay">
-            <div className="modal-content">
-                <h2>Determine Your Learning Path</h2>
-                <p>To help our AI, what topics would you most like to learn about?</p>
-                
-                <div className="interest-options">
-                    <button onClick={() => handleSurveySubmit('AI')} className="interest-btn">Artificial Intelligence</button>
-                    <button onClick={() => handleSurveySubmit('Cyber Security')} className="interest-btn">Cyber Security</button>
-                    <button onClick={() => handleSurveySubmit('IoT')} className="interest-btn">Internet of Things (IoT)</button>
+                {/* KANAN: AI Recommmendations (DSS Result) */}
+                <div className="right-column">
+                    <div className="card">
+                        <h3>AI Recommendations</h3>
+                        
+                        <div style={{marginBottom:'15px', color:'#6b7280', fontSize:'0.9rem', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                            <span>
+                                Adaptive path based on: <strong>{userData?.interest || "None"}</strong>
+                            </span>
+                            {/* TOMBOL EDIT INTEREST */}
+                            <button
+                                onClick={() => setShowSurvey(true)}
+                                style={{background:'none', border:'none', cursor:'pointer', color:'#1a56db', textDecoration:'underline', fontSize:'0.8rem'}}
+                            >
+                                Change
+                            </button>
+                        </div>
+
+                        {userData?.recommendations && userData.recommendations.length > 0 ? (
+                            userData.recommendations.map((module) => (
+                                <div key={module.id} className="rec-box">
+                                    <h4 style={{margin:'0 0 5px 0'}}>{module.title}</h4>
+                                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                                        <span className="rec-tag">{module.level}</span>
+                                        {/* Tombol Start Langsung ke Lesson */}
+                                        <span 
+                                            style={{fontSize:'0.85rem', color:'#1a56db', cursor:'pointer', fontWeight:'bold'}}
+                                            onClick={() => navigate(`/lesson/${module.id}`)}
+                                        >
+                                            Start Learning →
+                                        </span>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div style={{textAlign:'center', padding:'20px', color:'#9ca3af'}}>
+                                <p>There are no specific recommendations.</p>
+                                <button onClick={() => setShowSurvey(true)} className="secondary-btn">
+                                    Set Learning Interests
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
-      )}
-    </div>
+
+        {/* --- SURVEY MODAL --- */}
+        {showSurvey && (
+            <div className="modal-overlay">
+                <div className="modal-content">
+                    <h2>Determine Your Learning Path</h2>
+                    <p>To help our AI, what topics would you most like to learn about?</p>
+                    
+                    <div className="interest-options">
+                        <button onClick={() => handleSurveySubmit('AI')} className="interest-btn">Artificial Intelligence</button>
+                        <button onClick={() => handleSurveySubmit('Cyber Security')} className="interest-btn">Cyber Security</button>
+                        <button onClick={() => handleSurveySubmit('IoT')} className="interest-btn">Internet of Things (IoT)</button>
+                    </div>
+                </div>
+            </div>
+        )}
+        </div>
+    </Layout>
   );
 };
 

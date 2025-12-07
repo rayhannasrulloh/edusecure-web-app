@@ -364,3 +364,41 @@ def verify_and_reset_password(request):
         
     except User.DoesNotExist:
         return Response({"error": "User tidak valid."}, status=404)
+    
+
+@api_view(['PUT'])
+def update_profile(request):
+    current_username = request.data.get('current_username') # Username lama (untuk cari user)
+    
+    try:
+        user = User.objects.get(username=current_username)
+        
+        # Ambil data baru
+        new_username = request.data.get('username')
+        new_email = request.data.get('email')
+        new_name = request.data.get('fullName')
+        new_password = request.data.get('password')
+
+        # Update data jika ada
+        if new_username:
+            # Cek apakah username baru sudah dipakai orang lain
+            if new_username != current_username and User.objects.filter(username=new_username).exists():
+                return Response({"error": "Username sudah digunakan."}, status=400)
+            user.username = new_username
+            
+        if new_email: user.email = new_email
+        if new_name: user.first_name = new_name
+        if new_password: user.set_password(new_password) # Hash password baru
+
+        user.save()
+        
+        return Response({
+            "status": "success", 
+            "message": "Profil berhasil diperbarui. Silakan login ulang.",
+            "new_username": user.username
+        })
+
+    except User.DoesNotExist:
+        return Response({"error": "User tidak ditemukan."}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)

@@ -1,0 +1,110 @@
+.sidebar {
+    width: 80px; /* Lebar saat tertutup */
+    height: 100vh;
+    background-color: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.02);
+}
+
+/* Hover Effect: Melebar */
+.sidebar:hover {
+    width: 240px; /* Lebar saat terbuka */
+    align-items: flex-start; /* Rata kiri saat terbuka */
+    padding-left: 20px;
+}
+
+.sidebar-logo {
+    margin-bottom: 50px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    transition: 0.3s;
+}
+
+/* Saat sidebar melebar, logo geser sedikit ke kiri */
+.sidebar:hover .sidebar-logo {
+    justify-content: flex-start;
+    padding-left: 12px;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Jarak antar menu */
+    width: 100%;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #64748b; /* Warna abu-abu modern */
+    padding: 12px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    position: relative;
+    overflow: hidden; /* Mencegah teks bocor saat animasi */
+}
+
+/* Icon Style */
+.menu-item .icon {
+    min-width: 24px; /* Ukuran tetap agar tidak gepeng */
+    transition: 0.2s;
+}
+
+/* Text Label */
+.menu-item .label {
+    opacity: 0;
+    margin-left: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+    transition-delay: 0.1s; /* Muncul agak telat biar smooth */
+}
+
+/* Munculkan label saat hover sidebar */
+.sidebar:hover .menu-item .label {
+    opacity: 1;
+}
+
+/* State: Hover & Active */
+.menu-item:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
+.menu-item.active {
+    background-color: #eff6ff; /* Biru sangat muda */
+    color: #1a56db; /* EduSecure Blue */
+}
+
+/* Footer (Logout) */
+.sidebar-footer {
+    margin-top: auto;
+    width: 100%;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 20px;
+}
+
+.menu-item.logout {
+    color: #ef4444; /* Merah */
+}
+
+.menu-item.logout:hover {
+    background-color: #fef2f2;
+}

@@ -84,7 +84,7 @@ const Quiz = () => {
             {warningMsg && (
                 <div className="warning-overlay">
                     <div className="warning-icon">⚠️</div>
-                    <h1 className="warning-title">PELANGGARAN TERDETEKSI</h1>
+                    <h1 className="warning-title">VIOLATION DETECTED</h1>
                     <p className="warning-desc">{warningMsg}</p>
                     <p style={{marginTop:'20px', fontSize:'0.9rem', opacity:0.8}}>
                         Harap kembali menghadap layar untuk melanjutkan ujian.
