@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import { 
+    BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
+} from 'recharts';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -9,6 +13,8 @@ const Dashboard = () => {
   const [showSurvey, setShowSurvey] = useState(false);
   const [loading, setLoading] = useState(true);
   const [modules, setModules] = useState([]);
+
+  const [viewType, setViewType] = useState('list');
 
   const username = localStorage.getItem('username');
 
@@ -54,11 +60,19 @@ const Dashboard = () => {
         await fetchDashboardData(); 
         
         setShowSurvey(false);
-        alert(`Minat berhasil diubah ke ${selectedInterest}`);
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: `Minat berhasil diubah ke ${selectedInterest}`,
+        });
 
     } catch (error) {
         console.error(error);
-        alert("Gagal menyimpan survey.");
+        Swal.fire({
+            icon: 'error',
+            title: 'Failed!',
+            text: `Gagal menyimpan survey.`,
+        });
     }
   };
 
@@ -67,7 +81,97 @@ const Dashboard = () => {
       navigate('/login');
   }
 
-  if (loading) return <div className="dashboard-container">Loading...</div>;
+  // --- HELPER: RENDER CONTENT BERDASARKAN VIEW TYPE ---
+  const renderPerformanceContent = () => {
+      const data = userData?.history || [];
+      
+      // Jika data kosong
+      if (data.length === 0) {
+          return (
+            <div style={{height: '150px', display:'flex', alignItems:'center', justifyContent:'center', color:'#9ca3af', fontStyle:'italic'}}>
+                Belum ada riwayat kuis. Silakan mulai modul di bawah.
+            </div>
+          );
+      }
+
+      // Siapkan data untuk grafik (Recharts butuh array bersih)
+      // Kita balik urutannya (reverse) agar grafik dari kiri (lama) ke kanan (baru)
+      const chartData = [...data].reverse().map(item => ({
+          name: item.module_title.substring(0, 10) + '...', // Potong nama biar gak kepanjangan
+          full_name: item.module_title,
+          score: item.score
+      }));
+
+      if (viewType === 'list') {
+          return (
+            <div className="history-list">
+                {data.map((item, index) => (
+                    <div key={index} style={{
+                        display: 'flex', justifyContent: 'space-between', padding: '10px', 
+                        borderBottom: '1px solid #eee', alignItems: 'center'
+                    }}>
+                        <div>
+                            <strong>{item.module_title}</strong>
+                            <div style={{fontSize:'0.8rem', color:'#888'}}>
+                                {new Date(item.completed_at).toLocaleDateString()}
+                            </div>
+                        </div>
+                        <div style={{textAlign:'right'}}>
+                            <div style={{fontWeight:'bold', fontSize:'1.1rem'}}>{item.score}</div>
+                            <span style={{
+                                fontSize:'0.75rem', padding:'2px 6px', borderRadius:'4px',
+                                background: item.status === 'Lulus' ? '#dcfce7' : '#fee2e2',
+                                color: item.status === 'Lulus' ? '#166534' : '#991b1b'
+                            }}>
+                                {item.status}
+                            </span>
+                        </div>
+                    </div>
+                ))}
+            </div>
+          );
+      } else if (viewType === 'bar') {
+          return (
+            <div style={{ width: '100%', height: 250 }}>
+                <ResponsiveContainer>
+                    <BarChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" fontSize={12} />
+                        <YAxis domain={[0, 100]} />
+                        <Tooltip content={({active, payload}) => {
+                            if (active && payload && payload.length) {
+                                return (
+                                    <div style={{background:'white', padding:'10px', border:'1px solid #ccc'}}>
+                                        <p style={{fontWeight:'bold'}}>{payload[0].payload.full_name}</p>
+                                        <p>Score: {payload[0].value}</p>
+                                    </div>
+                                );
+                            }
+                            return null;
+                        }}/>
+                        <Bar dataKey="score" fill="#1a56db" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                </ResponsiveContainer>
+            </div>
+          );
+      } else if (viewType === 'line') {
+          return (
+            <div style={{ width: '100%', height: 250 }}>
+                <ResponsiveContainer>
+                    <LineChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" fontSize={12} />
+                        <YAxis domain={[0, 100]} />
+                        <Tooltip />
+                        <Line type="monotone" dataKey="score" stroke="#1a56db" strokeWidth={2} dot={{r:4}} />
+                    </LineChart>
+                </ResponsiveContainer>
+            </div>
+          );
+      }
+  };
+
+  if (loading) return <div className="dashboard-container" style={{padding:'40px'}}>Loading...</div>;
 
   return (
     <div className="dashboard-container">
@@ -91,48 +195,48 @@ const Dashboard = () => {
             
             {/* KIRI */}
             <div className="left-column">
-             <div className="card">
-                    <h3>Performance Overview</h3>
+                {/* 1. PERFORMANCE CARD (UPDATED) */}
+                <div className="card card-performance">
+                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'15px', borderBottom:'1px solid #e5e7eb', paddingBottom:'10px'}}>
+                        <h3 style={{borderBottom:'none', paddingBottom:0, marginBottom:0}}>Performance</h3>
+                        
+                        {/* 3. FILTER / PILIHAN TAMPILAN */}
+                        <div className="view-selector" style={{display:'flex', gap:'5px'}}>
+                            <button 
+                                onClick={() => setViewType('list')}
+                                style={{
+                                    padding:'5px 10px', borderRadius:'6px', border:'none',
+                                    background: viewType === 'list' ? '#1a56db' : 'white',
+                                    color: viewType === 'list' ? 'white' : '#666', cursor:'pointer'
+                                }}
+                            >
+                                List
+                            </button>
+                            <button 
+                                onClick={() => setViewType('bar')}
+                                style={{
+                                    padding:'5px 10px', borderRadius:'6px', border:'none',
+                                    background: viewType === 'bar' ? '#1a56db' : 'white',
+                                    color: viewType === 'bar' ? 'white' : '#666', cursor:'pointer'
+                                }}
+                            >
+                                Bar
+                            </button>
+                            <button 
+                                onClick={() => setViewType('line')}
+                                style={{
+                                    padding:'5px 10px', borderRadius:'6px', border:'none',
+                                    background: viewType === 'line' ? '#1a56db' : 'white',
+                                    color: viewType === 'line' ? 'white' : '#666', cursor:'pointer'
+                                }}
+                            >
+                                Plot
+                            </button>
+                        </div>
+                    </div>
                     
-                    {/* LOGIKA TAMPILAN HISTORY */}
-                    {userData?.history && userData.history.length > 0 ? (
-                        <div className="history-list">
-                            {userData.history.map((item, index) => (
-                                <div key={index} style={{
-                                    display: 'flex', 
-                                    justifyContent: 'space-between', 
-                                    padding: '10px', 
-                                    borderBottom: '1px solid #eee',
-                                    alignItems: 'center'
-                                }}>
-                                    <div>
-                                        <strong>{item.module_title}</strong>
-                                        <div style={{fontSize:'0.8rem', color:'#888'}}>
-                                            {new Date(item.completed_at).toLocaleDateString()}
-                                        </div>
-                                    </div>
-                                    <div style={{textAlign:'right'}}>
-                                        <div style={{fontWeight:'bold', fontSize:'1.1rem'}}>
-                                            {item.score}
-                                        </div>
-                                        <span style={{
-                                            fontSize:'0.75rem', 
-                                            padding:'2px 6px', 
-                                            borderRadius:'4px',
-                                            background: item.status === 'Lulus' ? '#dcfce7' : '#fee2e2',
-                                            color: item.status === 'Lulus' ? '#166534' : '#991b1b'
-                                        }}>
-                                            {item.status}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div style={{height: '100px', display:'flex', alignItems:'center', justifyContent:'center', color:'#9ca3af', fontStyle:'italic'}}>
-                            There is no quiz history yet bruh. Please start the module.
-                        </div>
-                    )}
+                    {/* Render Konten Dinamis */}
+                    {renderPerformanceContent()}
                 </div>
 
              <div className="card">
@@ -163,7 +267,7 @@ const Dashboard = () => {
              </div>
             </div>
 
-            {/* KANAN: AI Recommendations (DSS Result) */}
+            {/* KANAN: AI Recommmendations (DSS Result) */}
             <div className="right-column">
                 <div className="card">
                     <h3>AI Recommendations</h3>
