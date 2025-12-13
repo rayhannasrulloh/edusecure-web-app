@@ -15,9 +15,14 @@ class Module(models.Model):
     level = models.CharField(max_length=50, default="Beginner") # e.g., Beginner, Intermediate
     content = models.TextField(blank=True, null=True, help_text="Fill the material learning content here.")
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='General')
+    order = models.IntegerField(default=1, help_text="Module sequences (1, 2, 3...)")
+
+    class Meta:
+        ordering = ['order']
+    
     
     def __str__(self):
-        return self.title
+        return f"{self.title}.{self.title}"
 
 class StudentProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

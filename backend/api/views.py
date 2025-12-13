@@ -184,14 +184,14 @@ class SubmitExamView(APIView):
 @api_view(['GET'])
 def get_modules(request):
     modules = Module.objects.all()
-    serializer = ModuleSerializer(modules, many=True)
+    serializer = ModuleSerializer(modules, many=True, context={'request': request})
     return Response(serializer.data)
 
 @api_view(['GET'])
 def get_module_detail(request, module_id):
     # Ambil satu modul spesifik berdasarkan ID
     module = get_object_or_404(Module, id=module_id)
-    serializer = ModuleSerializer(module)
+    serializer = ModuleSerializer(module, context={'request': request})
     return Response(serializer.data)
 
 # --- VIEW DASHBOARD & SURVEY ---
@@ -230,17 +230,21 @@ def get_dashboard_data(request):
     username = request.query_params.get('username')
     try:
         profile = StudentProfile.objects.get(user__username=username)
-
-        # Jika user punya interest, ambil modul dengan kategori tersebut
+        
+        # 1. AMBIL REKOMENDASI ASLI DARI DB
         if profile.interest:
-            recommended_modules = Module.objects.filter(category=profile.interest)[:3] # Ambil 3 teratas
+            recommended_modules = Module.objects.filter(category=profile.interest)[:3]
         else:
             recommended_modules = []
 
-        # Serialize data modul
-        rec_serializer = ModuleSerializer(recommended_modules, many=True)
-        
-        #ambil 5 riwayat terakhir
+        # --- PERBAIKAN DI SINI (Tambahkan context={'request': request}) ---
+        rec_serializer = ModuleSerializer(
+            recommended_modules, 
+            many=True, 
+            context={'request': request} # <--- WAJIB ADA
+        )
+
+        # 2. AMBIL HISTORY
         history = ExamResult.objects.filter(student=profile).order_by('-completed_at')[:5]
         history_serializer = ExamResultSerializer(history, many=True)
 
