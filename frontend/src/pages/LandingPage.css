@@ -1,0 +1,194 @@
+/* LandingPage.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.landing-container {
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+    background: #ffffff;
+    overflow-x: hidden;
+}
+
+/* --- NAVBAR --- */
+.landing-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 5%;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: #1a56db;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+.btn {
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.btn-ghost {
+    background: transparent;
+    color: #64748b;
+}
+.btn-ghost:hover { color: #1a56db; }
+
+.btn-primary {
+    background: #1a56db;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 14px rgba(26, 86, 219, 0.3);
+}
+.btn-primary:hover {
+    background: #1e40af;
+    transform: translateY(-2px);
+}
+
+/* --- HERO SECTION --- */
+.hero-section {
+    padding: 160px 5% 100px;
+    text-align: center;
+    background: radial-gradient(circle at 50% 50%, #eff6ff 0%, #ffffff 100%);
+}
+
+.hero-badge {
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    background: -webkit-linear-gradient(45deg, #0f172a, #1a56db);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-desc {
+    font-size: 1.25rem;
+    color: #64748b;
+    max-width: 700px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+}
+
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* --- FEATURES GRID --- */
+.features-section {
+    padding: 80px 5%;
+    background: white;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.feature-card {
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid #f1f5f9;
+    background: white;
+    transition: 0.3s;
+}
+
+.feature-card:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    transform: translateY(-5px);
+    border-color: #e2e8f0;
+}
+
+.feature-icon {
+    width: 50px;
+    height: 50px;
+    background: #eff6ff;
+    color: #1a56db;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.feature-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; }
+.feature-card p { color: #64748b; line-height: 1.6; }
+
+/* --- TECH STACK (Agar Dosen Senang) --- */
+.tech-stack {
+    background: #0f172a;
+    color: white;
+    padding: 60px 5%;
+    text-align: center;
+}
+
+.tech-grid {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    opacity: 0.7;
+}
+
+.tech-item { font-weight: 600; font-size: 1.2rem; }
+
+/* --- FOOTER --- */
+footer {
+    padding: 40px 5%;
+    text-align: center;
+    border-top: 1px solid #f1f5f9;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-title { font-size: 2.5rem; }
+    .nav-links { display: none; } /* Simpelkan mobile menu */
+}
